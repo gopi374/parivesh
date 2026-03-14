@@ -37,6 +37,7 @@ async function seedData() {
         // Add sample environmental data
         const environmentalData = [
             {
+                name: 'John Smith',
                 project_title: 'Sample Industrial Project',
                 proponent: 'ABC Industries',
                 sector: 'industrial',
@@ -48,6 +49,7 @@ async function seedData() {
                 status: 'pending'
             },
             {
+                name: 'Sarah Johnson',
                 project_title: 'Infrastructure Development',
                 proponent: 'XYZ Construction',
                 sector: 'infrastructure',
@@ -59,6 +61,7 @@ async function seedData() {
                 status: 'under_review'
             },
             {
+                name: 'Mike Davis',
                 project_title: 'Mining Operation',
                 proponent: 'Mineral Corp',
                 sector: 'mining',

@@ -13,6 +13,7 @@ import { CheckCircle, FileText, MapPin, Building, Calendar } from 'lucide-react'
 export default function EnvironmentalClearancePage() {
     const [step, setStep] = useState<'overview' | 'form'>('overview');
     const [formData, setFormData] = useState({
+        name: '',
         projectTitle: '',
         proponent: '',
         sector: '',
@@ -25,13 +26,14 @@ export default function EnvironmentalClearancePage() {
         e.preventDefault();
 
         // Validate required fields
-        if (!formData.projectTitle || !formData.proponent || !formData.sector || !formData.category || !formData.location || !formData.description) {
+        if (!formData.name || !formData.projectTitle || !formData.proponent || !formData.sector || !formData.category || !formData.location || !formData.description) {
             alert('Please fill in all required fields');
             return;
         }
 
         try {
             console.log('Submitting form data:', {
+                name: formData.name,
                 project_title: formData.projectTitle,
                 proponent: formData.proponent,
                 sector: formData.sector,
@@ -41,6 +43,7 @@ export default function EnvironmentalClearancePage() {
             });
 
             const response = await axios.post('/api/environmental', {
+                name: formData.name,
                 project_title: formData.projectTitle,
                 proponent: formData.proponent,
                 sector: formData.sector,
@@ -54,6 +57,7 @@ export default function EnvironmentalClearancePage() {
 
             // Reset form
             setFormData({
+                name: '',
                 projectTitle: '',
                 proponent: '',
                 sector: '',
@@ -90,6 +94,17 @@ export default function EnvironmentalClearancePage() {
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="name">Full Name *</Label>
+                                        <Input
+                                            id="name"
+                                            placeholder="Enter your full name"
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="projectTitle">Project Title *</Label>

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import User from "../../../../models/user";
+import AuthUser from '@/models/user';
 import { NextResponse } from "next/server";
-import connectionToDatabase from "../../../../lib/mongoose";
+import connectionToDatabase from '@/lib/mongoose';
 
 export async function POST(request: Request) {
     try {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: `Missing fields: ${missing.join(', ')}` }, { status: 400 });
         }
         
-        const newUser = new User(data);
+        const newUser = new AuthUser(data);
         await newUser.save();
         console.log("💾 User SAVED:", newUser._id);
         return NextResponse.json({ message: "User created successfully", id: newUser._id }, { status: 201 });

@@ -7,17 +7,59 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Leaf, Lock, Mail, UserCircle } from 'lucide-react';
+import { Leaf, Lock, UserCircle, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
     const router = useRouter();
-    const [role, setRole] = useState<string>('proponent');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Simulate login and redirect to the selected role dashboard
-        router.push(`/dashboard/${role}`);
+        setLoading(true);
+        setError('');
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Login failed');
+            }
+
+            // Store user data in localStorage or context (for demo purposes)
+            localStorage.setItem('user', JSON.stringify(data.user));
+
+            // Redirect based on role
+            switch (data.user.role) {
+                case 'admin':
+                    router.push('/dashboard/admin');
+                    break;
+                case 'scrutiny':
+                    router.push('/dashboard/scrutiny');
+                    break;
+                case 'mom':
+                    router.push('/dashboard/mom');
+                    break;
+                case 'proponent':
+                default:
+                    router.push('/dashboard/proponent');
+                    break;
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -39,46 +81,57 @@ export default function LoginPage() {
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-xl">Authentication</CardTitle>
                         <CardDescription>
-                            Select your role and provide your login details.
+                            Enter your email and password to access the console.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
+                        {error && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
+                                <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                                <p className="text-red-800 text-sm">{error}</p>
+                            </div>
+                        )}
                         <form onSubmit={handleLogin} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="role">Account Role</Label>
-                                <Select onValueChange={(val) => setRole(val ?? 'proponent')} defaultValue="proponent">
-                                    <SelectTrigger id="role" className="h-12 border-muted hover:border-accent/50 transition-colors">
-                                        <SelectValue placeholder="Select role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="proponent">Project Proponent</SelectItem>
-                                        <SelectItem value="admin">System Administrator</SelectItem>
-                                        <SelectItem value="scrutiny" >Scrutiny Team</SelectItem>
-                                        <SelectItem value="mom">MoM Generation Team</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email Address</Label>
+                                <Label htmlFor="username">Username</Label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
-                                    <Input id="email" type="email" placeholder="name@example.com" className="pl-10 h-12 border-muted" required />
+                                    <UserCircle className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                                    <Input
+                                        id="username"
+                                        type="text"
+                                        placeholder="Enter your username"
+                                        className="pl-10 h-12 border-muted"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                    />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="password">Password</Label>
-                                    <Link href="/forgot-password" icon-size="sm" className="text-xs text-accent hover:underline font-medium">
+                                    <Link href="/forgot-password" className="text-xs text-accent hover:underline font-medium">
                                         Forgot password?
                                     </Link>
                                 </div>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
-                                    <Input id="password" type="password" className="pl-10 h-12 border-muted" required />
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        className="pl-10 h-12 border-muted"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
                                 </div>
                             </div>
-                            <Button type="submit" className="w-full h-12 text-lg bg-primary hover:bg-primary/90 mt-6 shadow-lg shadow-primary/20">
-                                Log In
+                            <Button
+                                type="submit"
+                                className="w-full h-12 text-lg bg-primary hover:bg-primary/90 mt-6 shadow-lg shadow-primary/20"
+                                disabled={loading}
+                            >
+                                {loading ? 'Signing In...' : 'Sign In'}
                             </Button>
                         </form>
                     </CardContent>

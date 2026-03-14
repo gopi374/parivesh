@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Environmental from '../../../../models/environmental';
-import connectionToDatabase from '../../../../lib/mongoose';
+import Environmental from '@/models/environmental';
+import connectionToDatabase from '@/lib/mongoose';
 
 export async function POST(request: NextRequest) {
     try {
@@ -9,9 +9,9 @@ export async function POST(request: NextRequest) {
         const data = await request.json();
 
         // Validate required fields
-        const { project_title, proponent, sector, category, location, description } = data;
+        const { name, project_title, proponent, sector, category, location, description } = data;
 
-        if (!project_title || !proponent || !sector || !category || !location || !description) {
+        if (!name || !project_title || !proponent || !sector || !category || !location || !description) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 }
@@ -19,6 +19,8 @@ export async function POST(request: NextRequest) {
         }
 
         const newEnvironmental = new Environmental({
+            uid: `EC-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+            name,
             project_title,
             proponent,
             sector,
@@ -27,7 +29,8 @@ export async function POST(request: NextRequest) {
             description,
             environmental_impact: data.environmental_impact || '',
             mitigation_measures: data.mitigation_measures || '',
-            status: 'pending'
+            status: 'pending',
+            stage: 'submitted' // assuming when submitted, stage is submitted
         });
 
         await newEnvironmental.save();
@@ -50,9 +53,29 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
         await connectionToDatabase();
+
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+        const uid = searchParams.get('uid');
+
+        if (id) {
+            const application = await Environmental.findById(id);
+            if (!application) {
+                return NextResponse.json({ error: 'Application not found' }, { status: 404 });
+            }
+            return NextResponse.json(application);
+        }
+
+        if (uid) {
+            const application = await Environmental.findOne({ uid });
+            if (!application) {
+                return NextResponse.json({ error: 'Application not found' }, { status: 404 });
+            }
+            return NextResponse.json(application);
+        }
 
         const applications = await Environmental.find().sort({ submittedAt: -1 });
 

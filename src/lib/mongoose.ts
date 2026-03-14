@@ -20,8 +20,6 @@ const connectionToDatabase = async () => {
         console.error("URI check:", MONGODB_URI ? "Set ✓" : "Missing ✗");
         throw error;
     }
-
 };
 
 export default connectionToDatabase;
-

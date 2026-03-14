@@ -9,6 +9,7 @@ const clearanceSchema = new mongoose.Schema({
     description: { type: String, required: true },
     type: { type: String, enum: ['environmental', 'forest', 'wildlife', 'crz'], default: 'environmental' },
     status: { type: String, enum: ['pending', 'under_review', 'approved', 'rejected'], default: 'pending' },
+    stage: { type: String, enum: ['draft', 'submitted', 'scrutiny', 'eds', 'referred', 'mom', 'finalized'], default: 'draft' },
     submittedAt: { type: Date, default: Date.now }
 });
 
