@@ -22,11 +22,12 @@ export async function POST(request: Request) {
         console.log("💾 User SAVED:", newUser._id);
         return NextResponse.json({ message: "User created successfully", id: newUser._id }, { status: 201 });
     } catch (error) {
-        console.error("💥 POST /api/users ERROR:", error.message);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error("💥 POST /api/users ERROR:", errorMessage);
         console.error("Full error:", error);
         return NextResponse.json({ 
             error: "Failed to create user", 
-            details: error.message 
+            details: errorMessage 
         }, { status: 500 });
     }
 }

@@ -23,19 +23,48 @@ export default function EnvironmentalClearancePage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Here you would typically submit to an API
+
+        // Validate required fields
+        if (!formData.projectTitle || !formData.proponent || !formData.sector || !formData.category || !formData.location || !formData.description) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
         try {
-            const response = await axios.post('/api/users', {
+            console.log('Submitting form data:', {
                 project_title: formData.projectTitle,
-                Proposal_name: formData.proponent,
+                proponent: formData.proponent,
                 sector: formData.sector,
-                product_category: formData.category,
-                product_location: formData.location,
-                product_description: formData.description
+                category: formData.category,
+                location: formData.location,
+                description: formData.description
             });
+
+            const response = await axios.post('/api/environmental', {
+                project_title: formData.projectTitle,
+                proponent: formData.proponent,
+                sector: formData.sector,
+                category: formData.category,
+                location: formData.location,
+                description: formData.description
+            });
+
             console.log('Submission successful:', response.data);
-        } catch (e) {
-            console.log(e);
+            alert('Environmental application submitted successfully!');
+
+            // Reset form
+            setFormData({
+                projectTitle: '',
+                proponent: '',
+                sector: '',
+                category: '',
+                location: '',
+                description: '',
+            });
+        } catch (error: any) {
+            console.error('Submission failed:', error);
+            console.error('Error response:', error.response?.data);
+            alert(`Failed to submit application: ${error.response?.data?.error || error.message}`);
         }
     };
 
@@ -99,9 +128,9 @@ export default function EnvironmentalClearancePage() {
                                                     <SelectItem value="industrial">Industrial</SelectItem>
                                                     <SelectItem value="infrastructure">Infrastructure</SelectItem>
                                                     <SelectItem value="mining">Mining</SelectItem>
-                                                    <SelectItem value="thermal">Thermal Power</SelectItem>
+                                                    <SelectItem value="thermal power">Thermal Power</SelectItem>
                                                     <SelectItem value="nuclear">Nuclear</SelectItem>
-                                                    <SelectItem value="river-valley">River Valley</SelectItem>
+                                                    <SelectItem value="river valley">River Valley</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
