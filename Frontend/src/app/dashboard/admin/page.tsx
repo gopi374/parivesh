@@ -46,13 +46,13 @@ export default function AdminOverview() {
                 if (!token) return;
 
                 // Fetch Users
-                const usersRes = await fetch('http://localhost:5000/api/users', {
+                const usersRes = await fetch('/api/users', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const users = await usersRes.json();
 
                 // Fetch All Proposals (as admin)
-                const propsRes = await fetch('http://localhost:5000/api/proposals', {
+                const propsRes = await fetch('/api/proposals', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const proposals = await propsRes.json();

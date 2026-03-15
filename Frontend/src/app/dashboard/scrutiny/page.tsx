@@ -28,7 +28,7 @@ export default function ScrutinyOverview() {
         try {
             if (!token) return;
 
-            const response = await fetch('http://localhost:5000/api/scrutiny/tasks', {
+            const response = await fetch('/api/scrutiny/tasks', {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -51,7 +51,7 @@ export default function ScrutinyOverview() {
         try {
             if (!token) return;
 
-            const response = await fetch(`http://localhost:5000/api/scrutiny/refer-mom/${proposerId}`, {
+            const response = await fetch(`/api/scrutiny/refer-mom/${proposerId}`, {
                 method: 'PATCH',
                 headers: { 
                     'Content-Type': 'application/json',

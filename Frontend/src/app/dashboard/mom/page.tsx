@@ -32,7 +32,7 @@ export default function MoMOverview() {
             try {
                 if (!token) return;
 
-                const response = await fetch('http://localhost:5000/api/proposals', {
+                const response = await fetch('/api/proposals', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

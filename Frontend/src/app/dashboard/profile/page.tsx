@@ -34,7 +34,7 @@ export default function ProfilePage() {
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/me', {
+                const response = await fetch('/api/auth/me', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -85,7 +85,7 @@ export default function ProfilePage() {
         try {
             if (!token) throw new Error("Not authenticated");
 
-            const response = await fetch('http://localhost:5000/api/users/profile', {
+            const response = await fetch('/api/users/profile', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

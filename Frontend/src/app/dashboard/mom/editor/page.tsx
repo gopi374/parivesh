@@ -46,7 +46,7 @@ export default function MoMEditor() {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:5000/api/proposals/${projectId}`, {
+                const response = await fetch(`/api/proposals/${projectId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

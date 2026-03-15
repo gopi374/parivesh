@@ -79,7 +79,7 @@ export default function NewApplication() {
                 return;
             }
 
-            const response = await fetch('http://localhost:5000/api/proposals', {
+            const response = await fetch('/api/proposals', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
